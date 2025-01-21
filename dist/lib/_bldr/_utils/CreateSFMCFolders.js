@@ -35,7 +35,6 @@ const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, functio
         let manifestFolderCategories = manifestJSON[folder.context.context]['folders'].map((manifestFolder) => manifestFolder);
         let manifestFolders = yield (0, _1.uniqueArrayByKey)([...manifestAssetCategories, ...manifestFolderCategories], 'folderPath');
         const createdFoldersOutput = [];
-        console.log('to be created', folder);
         let checkPath = rootContextFolder;
         let parentId;
         let createFolder;

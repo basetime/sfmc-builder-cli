@@ -1,6 +1,6 @@
-import { MappingByActivityType } from '../../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities';
+import { MappingByActivityType } from '../../../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities';
 import parseSQLDataExtensions from '@basetime/bldr-sfmc-sdk/dist/cli/utils/_context/automationStudio/ParseSQLDataExtensions';
-import { guid } from '../../../_utils';
+import { guid } from '../../../../_utils';
 
 export const setAutomationActivityDependencies = async (asset: any, manifestJSON: any) => {
     const assetType = asset.assetType;
@@ -126,7 +126,6 @@ const parsedSQLDependencies = async (dependencies: any[], asset: any, manifestJS
     const parsedSQLDataExtensionDependencies = await parseSQLDataExtensions(asset.queryText);
     if (parsedSQLDataExtensionDependencies && parsedSQLDataExtensionDependencies.length) {
         for (const p in parsedSQLDataExtensionDependencies) {
-            console.log(parsedSQLDataExtensionDependencies[p]);
             const bldrId =
                 manifestJSON &&
                 manifestJSON.dataExtension &&

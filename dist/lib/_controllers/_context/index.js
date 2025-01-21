@@ -30,7 +30,9 @@ const ContextSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function*
         !argv['automation-studio'] &&
         !argv.as &&
         !argv.de &&
-        !argv['data-extension']) {
+        !argv['data-extension'] &&
+        !argv.ts &&
+        !argv['triggered-send']) {
         throw new Error('Please include a context flag');
     }
     if (argv.cb || argv['content-builder']) {
@@ -42,31 +44,9 @@ const ContextSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function*
     if (argv.de || argv['data-extension']) {
         (0, dataExtension_1.DataExtensionSwitch)(req, argv);
     }
-    // /**
-    //  * Get Configuration by Instance key
-    //  * argv._[0] is the command
-    //  */
-    // if (argv._ && argv._[1]) {
-    //   return getInstanceConfiguration(argv._[1], true);
-    // }
-    // /**
-    //  * List all Configurations
-    //  */
-    // if (argv.l || argv.list) {
-    //   return listInstanceConfiguration(argv);
-    // }
-    // /**
-    //  * Remove Configuration by Instance Key
-    //  */
-    // if (argv.r || argv.remove) {
-    //   return removeConfiguration(argv);
-    // }
-    // /**
-    //  * Set State Instance
-    //  */
-    // if (argv.s || argv.set) {
-    //   return setConfiguration(argv);
-    // }
+    if (argv.ts || argv['triggered-send']) {
+        console.log('triggered send');
+    }
     return;
 });
 exports.ContextSwitch = ContextSwitch;

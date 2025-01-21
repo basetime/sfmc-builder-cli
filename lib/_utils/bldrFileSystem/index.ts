@@ -89,9 +89,9 @@ const scrubBldrSfmcEnv = async (content: string) => {
 
 const replaceBldrSfmcEnv = async (content: string) => {
     const dirPath = await getRootPath();
-    if (fileExists(normalizedENVPath)) {
+    if (fileExists(`${dirPath}/.sfmc.env.json`)) {
         const config = await readBldrSfmcEnv();
-
+        console.log({config})
         for (const c in config) {
             const key = c;
             const value = config[c];

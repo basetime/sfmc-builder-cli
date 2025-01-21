@@ -85,6 +85,7 @@ export class Config {
 
                     displayLine('Gathering Business Unit Details...');
 
+                    let instanceBusinessUnits: any[] = [];
                     // Get All Business Unit Details from provided credentials
                     const getAllBusinessUnitDetails = await sdk.sfmc.account.getAllBusinessUnitDetails();
                     debug('Business Unit Return', 'info', getAllBusinessUnitDetails);
@@ -94,19 +95,20 @@ export class Config {
                         !Array.isArray(getAllBusinessUnitDetails) ||
                         (Array.isArray(getAllBusinessUnitDetails) && !getAllBusinessUnitDetails.length)
                     ) {
-                        throw new Error('Unable to get Instance Details. Please review credentials.');
+                        instanceBusinessUnits = await sdk.sfmc.account.getBusinessUnitDetails();
                     }
 
                     // Isolate each Business Unit Name and MID for stored configuration
-                    const instanceBusinessUnits =
-                        Array.isArray(getAllBusinessUnitDetails) &&
-                        getAllBusinessUnitDetails.length &&
-                        getAllBusinessUnitDetails.map((bu: { Name: string; ID: number }) => {
-                            return {
-                                name: bu.Name,
-                                mid: bu.ID,
-                            };
-                        });
+                    instanceBusinessUnits =
+                        (Array.isArray(getAllBusinessUnitDetails) &&
+                            getAllBusinessUnitDetails.length &&
+                            getAllBusinessUnitDetails.map((bu: { Name: string; ID: number }) => {
+                                return {
+                                    name: bu.Name,
+                                    mid: bu.ID,
+                                };
+                            })) ||
+                        [];
 
                     // Encrypt Configuration object
                     const encryptedConfiguration = {
@@ -142,6 +144,74 @@ export class Config {
         }
     };
     /**
+     *
+     * @param argv
+     */
+    updateAvailableBusinessUnits = async (instance: string) => {
+        try {
+            displayLine(`Updating Business Units for ${instance}...`);
+            const instanceConfig = await this.getInstanceConfiguration(instance, false);
+            const sdk = await initiateBldrSDK(
+                {
+                    client_id: instanceConfig.apiClientId,
+                    client_secret: instanceConfig.apiClientSecret,
+                    account_id: instanceConfig.parentMID,
+                    auth_url: instanceConfig.authURI,
+                },
+                instanceConfig.instance,
+                instanceConfig.configurationType
+            );
+
+            // Throw Error if SDK Fails to Load
+            if (!sdk) {
+                displayLine('Unable to test configuration. Please review and retry.', 'error');
+                return;
+            }
+
+            displayLine('Gathering Business Unit Details...');
+
+            let instanceBusinessUnits: any[] = [];
+            // Get All Business Unit Details from provided credentials
+            const getAllBusinessUnitDetails = await sdk.sfmc.account.getAllBusinessUnitDetails();
+            debug('Business Unit Return', 'info', getAllBusinessUnitDetails);
+
+            // Throw Error if there are issues with getting Business Unit Details
+            if (
+                !Array.isArray(getAllBusinessUnitDetails) ||
+                (Array.isArray(getAllBusinessUnitDetails) && !getAllBusinessUnitDetails.length)
+            ) {
+                instanceBusinessUnits = await sdk.sfmc.account.getBusinessUnitDetails();
+            }
+
+            // Isolate each Business Unit Name and MID for stored configuration
+            instanceBusinessUnits =
+                (Array.isArray(getAllBusinessUnitDetails) &&
+                    getAllBusinessUnitDetails.length &&
+                    getAllBusinessUnitDetails.map((bu: { Name: string; ID: number }) => {
+                        return {
+                            name: bu.Name,
+                            mid: bu.ID,
+                        };
+                    })) ||
+                [];
+
+            // Encrypt Configuration object
+            const encryptedConfiguration = {
+                ...instanceConfig,
+                mids: instanceBusinessUnits,
+                apiClientId: await encrypt(instanceConfig.apiClientId),
+                apiClientSecret: await encrypt(instanceConfig.apiClientSecret),
+            };
+
+            debug('Encrypted Configuration', 'info', encryptedConfiguration);
+
+            // Store credentials in users PSW Management
+            // OSX Keychain Access
+            // Windows Credential Manager
+            await setPassword('bldr', instanceConfig.instance, JSON.stringify(encryptedConfiguration));
+        } catch (err: any) {}
+    };
+    /**
      * Retrieve configuration for a specific instance or all saved configurations
      * @param {string} instance Name of configuration to get
      * @param {boolean} show toggle the displaying of information
@@ -158,6 +228,7 @@ export class Config {
         mids: any[];
         authURI: string;
         configurationType: string;
+        instance: string;
     }> => {
         if (!instance) {
             displayLine('Please provide an instance name', 'error');

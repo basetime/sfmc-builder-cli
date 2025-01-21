@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildAutomationSteps = void 0;
-const automationActivities_1 = require("../../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities");
+const automationActivities_1 = require("../../../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities");
 const buildAutomationSteps = (asset, contextAssets) => {
     const stepOutput = [];
     const formattedSteps = asset.steps &&

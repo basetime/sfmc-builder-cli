@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setAutomationActivityDependencies = void 0;
 const ParseSQLDataExtensions_1 = __importDefault(require("@basetime/bldr-sfmc-sdk/dist/cli/utils/_context/automationStudio/ParseSQLDataExtensions"));
-const _utils_1 = require("../../../_utils");
+const _utils_1 = require("../../../../_utils");
 const setAutomationActivityDependencies = (asset, manifestJSON) => __awaiter(void 0, void 0, void 0, function* () {
     const assetType = asset.assetType;
     const activityType = assetType.name;
@@ -89,14 +89,14 @@ const setAutomationActivityDependencies = (asset, manifestJSON) => __awaiter(voi
             delete asset.filterDefinition.id;
             delete asset.filterDefinition.key;
             delete asset.filterDefinition.categoryId;
-            delete asset.filterDefinition.createdDate;
-            delete asset.filterDefinition.modifiedDate;
             delete asset.filterDefinition.createdBy;
+            delete asset.filterDefinition.createdDate;
+            delete asset.filterDefinition.createdByName;
             delete asset.filterDefinition.modifiedBy;
+            delete asset.filterDefinition.modifiedDate;
             delete asset.filterDefinition.lastUpdatedBy;
             delete asset.filterDefinition.lastUpdated;
             delete asset.filterDefinition.lastUpdatedByName;
-            delete asset.filterDefinition.createdByName;
             break;
         case 'dataextractactivity':
             break;
@@ -120,7 +120,6 @@ const parsedSQLDependencies = (dependencies, asset, manifestJSON) => __awaiter(v
     const parsedSQLDataExtensionDependencies = yield (0, ParseSQLDataExtensions_1.default)(asset.queryText);
     if (parsedSQLDataExtensionDependencies && parsedSQLDataExtensionDependencies.length) {
         for (const p in parsedSQLDataExtensionDependencies) {
-            console.log(parsedSQLDataExtensionDependencies[p]);
             const bldrId = manifestJSON &&
                 manifestJSON.dataExtension &&
                 manifestJSON.dataExtension.assets &&

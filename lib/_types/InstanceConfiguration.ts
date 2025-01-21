@@ -5,4 +5,5 @@ export interface InstanceConfiguration {
     mids: any[];
     authURI: string;
     configurationType: string;
+    instance:string
 }

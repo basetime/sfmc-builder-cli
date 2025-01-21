@@ -5,6 +5,7 @@
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
+        "moduleResolution": "node",
         "forceConsistentCasingInFileNames": true,
         "outDir": "dist",
         "lib": ["es2021", "es5", "es6", "dom", "dom.iterable"]

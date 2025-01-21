@@ -1,7 +1,7 @@
 import {
     MappingByActivityType,
     MappingByActivityTypeId,
-} from '../../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities';
+} from '../../../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities';
 
 export const buildAutomationSteps = (
     asset: {

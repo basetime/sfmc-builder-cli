@@ -46,9 +46,6 @@ export class Deploy {
             allowTracking() && incrementMetric('req_command_deploy');
             const packageJSON = await readPackageManifest();
             const availableContexts: string[] = sfmcContext.sfmc_context_mapping.map((ctx) => ctx.context);
-
-            console.log({ availableContexts: sfmcContext.sfmc_context_mapping });
-
             const packageContexts = Object.keys(packageJSON).map((key) => {
                 return availableContexts.includes(key) && typeof key === 'string' && key;
             });
@@ -93,7 +90,6 @@ export class Deploy {
                         .filter(Boolean);
 
                     pkgFolderPaths = [...new Set(pkgFolderPaths)];
-                    console.log({ pkgFolderPaths });
 
                     !sfmcOnly && displayLine(`Creating ${context} Local Files`, 'progress');
                     !sfmcOnly && (await createEditableFilesBasedOnContext(context, pkgAssets));
@@ -123,7 +119,15 @@ export class Deploy {
             const package_automationStudio =
                 packageContexts.includes('automationStudio') && packageJSON['automationStudio']['assets'];
 
-            !localOnly && sdk && package_dataExtension && (await this.deployDataExtension(sdk, package_dataExtension));
+            const package_dataExtensionValid =
+                sdk &&
+                package_dataExtension &&
+                (await this.deploymentValid(sdk, 'dataExtension', package_dataExtension));
+
+
+            console.log({ package_dataExtensionValid});
+
+            !localOnly && sdk && package_dataExtension && package_dataExtensionValid && (await this.deployDataExtension(sdk, package_dataExtension));
             !localOnly &&
                 sdk &&
                 package_contentBuilder &&
@@ -261,7 +265,6 @@ export class Deploy {
 
         if (packageDeployIgnore.includes(contentBuilderAsset.assetType.name)) {
             await updateManifest('contentBuilder', { assets: [updatedAsset] });
-
             await createEditableFilesBasedOnContext('contentBuilder', [updatedAsset]);
         } else if (createAsset.status === 'ERROR') {
             console.log(createAsset.statusText);
@@ -313,7 +316,6 @@ export class Deploy {
 
         for (const a in assetDependencies) {
             const assetDependency = assetDependencies[a];
-
             const assetContext = assetDependency.context;
             const manifestContextAssets = manifestJSON[assetContext]['assets'];
 
@@ -420,5 +422,41 @@ export class Deploy {
                 statusMessage.includes('Updating an existing Data Extension definition') &&
                 displayLine('Please ensure all Data Extension names/customer keys are unique', 'error');
         }
+    };
+
+    deploymentValid = async (sdk: BLDR_Client, context: string, assets: any[]) => {
+        let contextValidity: any[] = [];
+
+        displayLine(`Checking ${context} validation`, 'info')
+
+        for (const a in assets) {
+            const asset = assets[a];
+            switch (context) {
+                case 'dataExtension':
+                    const check = await sdk.sfmc.emailStudio.searchDataExtensionByName({
+                        searchKey: 'Name',
+                        searchTerm: asset.name,
+                    });
+                    if (check && check.Results && check.Results.length) {
+                        contextValidity.push({
+                            status: 'error',
+                            msg: `${asset.name} already exists.`,
+                        });
+                    } else {
+                        contextValidity.push({
+                            status: 'success',
+                            msg: `${asset.name} is does not currently exist.`,
+                        });
+                    }
+
+                    break;
+            }
+        }
+
+        const valid = contextValidity.find((asset: {status: 'error' | 'success'}) => asset.status === 'error') ? false : true;
+        contextValidity && contextValidity.length && contextValidity.forEach((asset: {status: 'error' | 'success', msg: string}) => displayLine(asset.msg, asset.status))
+        contextValidity && contextValidity.length && !valid && displayLine('Address any conflicts and run [ bldr deploy ] again.', 'progress');
+        contextValidity && contextValidity.length && valid && displayLine('No conflicts to address.', 'success');
+        return valid;
     };
 }

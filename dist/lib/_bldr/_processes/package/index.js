@@ -24,8 +24,8 @@ const display_1 = require("../../../_utils/display");
 const _utils_1 = require("../../_utils");
 const state_1 = require("../state");
 const metrics_1 = require("../../../_utils/metrics");
-const package_BuildAutomationSteps_1 = require("../_contexts/automationStudio/package_BuildAutomationSteps");
-const package_SetActivityDependencies_1 = require("../_contexts/automationStudio/package_SetActivityDependencies");
+const package_BuildAutomationSteps_1 = require("../_contexts/automationStudio/package/package_BuildAutomationSteps");
+const setActivityDependencies_1 = require("../_contexts/automationStudio/package/setActivityDependencies");
 const { allowTracking } = new state_1.State();
 /**
  */
@@ -129,7 +129,7 @@ class Package {
                                                 };
                                             }
                                             else {
-                                                assetObject = yield (0, package_SetActivityDependencies_1.setAutomationActivityDependencies)(asset, manifestJSON);
+                                                assetObject = yield (0, setActivityDependencies_1.setAutomationActivityDependencies)(asset, manifestJSON);
                                             }
                                             console.log({ assetObject });
                                             packageOut['automationStudio']['assets'].push(assetObject);

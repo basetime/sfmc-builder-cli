@@ -28,6 +28,8 @@ export interface Argv {
     'content-builder'?: Boolean;
     as?: Boolean;
     'automation-studio'?: Boolean;
+    ts?: Boolean;
+    'triggered-send'?: Boolean;
     // Context Types
     f?: string;
     a?: string;
@@ -38,4 +40,6 @@ export interface Argv {
     'update-env-keys'?: Boolean;
     'env-only'?: Boolean;
     force?: Boolean;
+    u?:Boolean;
+    update?: Boolean;
 }

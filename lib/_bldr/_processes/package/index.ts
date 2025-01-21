@@ -22,8 +22,8 @@ import { assignObject, uniqueArrayByKey } from '../../_utils';
 
 import { State } from '../state';
 import { incrementMetric } from '../../../_utils/metrics';
-import { buildAutomationSteps } from '../_contexts/automationStudio/package_BuildAutomationSteps';
-import { setAutomationActivityDependencies } from '../_contexts/automationStudio/package_SetActivityDependencies';
+import { buildAutomationSteps } from '../_contexts/automationStudio/package/package_BuildAutomationSteps';
+import { setAutomationActivityDependencies } from '../_contexts/automationStudio/package/setActivityDependencies';
 const { allowTracking } = new State();
 
 /**
@@ -188,6 +188,7 @@ export class Package {
                                                         status: 'Ready',
                                                         steps: buildAutomationSteps(asset, contextAssets),
                                                     };
+
                                                 } else {
                                                     assetObject = await setAutomationActivityDependencies(asset, manifestJSON)
                                                 }

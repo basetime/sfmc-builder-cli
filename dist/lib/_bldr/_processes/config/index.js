@@ -74,23 +74,26 @@ class Config {
                         return;
                     }
                     (0, display_1.displayLine)('Gathering Business Unit Details...');
+                    let instanceBusinessUnits = [];
                     // Get All Business Unit Details from provided credentials
                     const getAllBusinessUnitDetails = yield sdk.sfmc.account.getAllBusinessUnitDetails();
                     debug('Business Unit Return', 'info', getAllBusinessUnitDetails);
                     // Throw Error if there are issues with getting Business Unit Details
                     if (!Array.isArray(getAllBusinessUnitDetails) ||
                         (Array.isArray(getAllBusinessUnitDetails) && !getAllBusinessUnitDetails.length)) {
-                        throw new Error('Unable to get Instance Details. Please review credentials.');
+                        instanceBusinessUnits = yield sdk.sfmc.account.getBusinessUnitDetails();
                     }
                     // Isolate each Business Unit Name and MID for stored configuration
-                    const instanceBusinessUnits = Array.isArray(getAllBusinessUnitDetails) &&
-                        getAllBusinessUnitDetails.length &&
-                        getAllBusinessUnitDetails.map((bu) => {
-                            return {
-                                name: bu.Name,
-                                mid: bu.ID,
-                            };
-                        });
+                    instanceBusinessUnits =
+                        (Array.isArray(getAllBusinessUnitDetails) &&
+                            getAllBusinessUnitDetails.length &&
+                            getAllBusinessUnitDetails.map((bu) => {
+                                return {
+                                    name: bu.Name,
+                                    mid: bu.ID,
+                                };
+                            })) ||
+                            [];
                     // Encrypt Configuration object
                     const encryptedConfiguration = Object.assign(Object.assign({}, configured), { mids: instanceBusinessUnits, apiClientId: yield encrypt(configResults.apiClientId), apiClientSecret: yield encrypt(configResults.apiClientSecret) });
                     debug('Encrypted Configuration', 'info', encryptedConfiguration);
@@ -114,6 +117,56 @@ class Config {
                 err.message && (0, display_1.displayLine)(err.message, 'error');
                 return err;
             }
+        });
+        /**
+         *
+         * @param argv
+         */
+        this.updateAvailableBusinessUnits = (instance) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                (0, display_1.displayLine)(`Updating Business Units for ${instance}...`);
+                const instanceConfig = yield this.getInstanceConfiguration(instance, false);
+                const sdk = yield (0, _bldr_sdk_1.initiateBldrSDK)({
+                    client_id: instanceConfig.apiClientId,
+                    client_secret: instanceConfig.apiClientSecret,
+                    account_id: instanceConfig.parentMID,
+                    auth_url: instanceConfig.authURI,
+                }, instanceConfig.instance, instanceConfig.configurationType);
+                // Throw Error if SDK Fails to Load
+                if (!sdk) {
+                    (0, display_1.displayLine)('Unable to test configuration. Please review and retry.', 'error');
+                    return;
+                }
+                (0, display_1.displayLine)('Gathering Business Unit Details...');
+                let instanceBusinessUnits = [];
+                // Get All Business Unit Details from provided credentials
+                const getAllBusinessUnitDetails = yield sdk.sfmc.account.getAllBusinessUnitDetails();
+                debug('Business Unit Return', 'info', getAllBusinessUnitDetails);
+                // Throw Error if there are issues with getting Business Unit Details
+                if (!Array.isArray(getAllBusinessUnitDetails) ||
+                    (Array.isArray(getAllBusinessUnitDetails) && !getAllBusinessUnitDetails.length)) {
+                    instanceBusinessUnits = yield sdk.sfmc.account.getBusinessUnitDetails();
+                }
+                // Isolate each Business Unit Name and MID for stored configuration
+                instanceBusinessUnits =
+                    (Array.isArray(getAllBusinessUnitDetails) &&
+                        getAllBusinessUnitDetails.length &&
+                        getAllBusinessUnitDetails.map((bu) => {
+                            return {
+                                name: bu.Name,
+                                mid: bu.ID,
+                            };
+                        })) ||
+                        [];
+                // Encrypt Configuration object
+                const encryptedConfiguration = Object.assign(Object.assign({}, instanceConfig), { mids: instanceBusinessUnits, apiClientId: yield encrypt(instanceConfig.apiClientId), apiClientSecret: yield encrypt(instanceConfig.apiClientSecret) });
+                debug('Encrypted Configuration', 'info', encryptedConfiguration);
+                // Store credentials in users PSW Management
+                // OSX Keychain Access
+                // Windows Credential Manager
+                yield (0, keytar_sync_1.setPassword)('bldr', instanceConfig.instance, JSON.stringify(encryptedConfiguration));
+            }
+            catch (err) { }
         });
         /**
          * Retrieve configuration for a specific instance or all saved configurations

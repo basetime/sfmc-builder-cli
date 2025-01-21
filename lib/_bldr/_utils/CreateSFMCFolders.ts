@@ -45,7 +45,6 @@ const addNewFolders = async (
 
         const createdFoldersOutput: any[] = [];
 
-        console.log('to be created', folder);
         let checkPath = rootContextFolder;
         let parentId;
         let createFolder;
