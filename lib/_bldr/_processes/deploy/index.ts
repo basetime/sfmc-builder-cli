@@ -124,10 +124,13 @@ export class Deploy {
                 package_dataExtension &&
                 (await this.deploymentValid(sdk, 'dataExtension', package_dataExtension));
 
+            console.log({ package_dataExtensionValid });
 
-            console.log({ package_dataExtensionValid});
-
-            !localOnly && sdk && package_dataExtension && package_dataExtensionValid && (await this.deployDataExtension(sdk, package_dataExtension));
+            !localOnly &&
+                sdk &&
+                package_dataExtension &&
+                package_dataExtensionValid &&
+                (await this.deployDataExtension(sdk, package_dataExtension));
             !localOnly &&
                 sdk &&
                 package_contentBuilder &&
@@ -427,7 +430,7 @@ export class Deploy {
     deploymentValid = async (sdk: BLDR_Client, context: string, assets: any[]) => {
         let contextValidity: any[] = [];
 
-        displayLine(`Checking ${context} validation`, 'info')
+        displayLine(`Checking ${context} validation`, 'info');
 
         for (const a in assets) {
             const asset = assets[a];
@@ -453,9 +456,18 @@ export class Deploy {
             }
         }
 
-        const valid = contextValidity.find((asset: {status: 'error' | 'success'}) => asset.status === 'error') ? false : true;
-        contextValidity && contextValidity.length && contextValidity.forEach((asset: {status: 'error' | 'success', msg: string}) => displayLine(asset.msg, asset.status))
-        contextValidity && contextValidity.length && !valid && displayLine('Address any conflicts and run [ bldr deploy ] again.', 'progress');
+        const valid = contextValidity.find((asset: { status: 'error' | 'success' }) => asset.status === 'error')
+            ? false
+            : true;
+        contextValidity &&
+            contextValidity.length &&
+            contextValidity.forEach((asset: { status: 'error' | 'success'; msg: string }) =>
+                displayLine(asset.msg, asset.status)
+            );
+        contextValidity &&
+            contextValidity.length &&
+            !valid &&
+            displayLine('Address any conflicts and run [ bldr deploy ] again.', 'progress');
         contextValidity && contextValidity.length && valid && displayLine('No conflicts to address.', 'success');
         return valid;
     };

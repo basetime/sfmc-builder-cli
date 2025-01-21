@@ -51,8 +51,6 @@
 //     return stepsOutput;
 //   };
 
-
-
 //   /*
 //   buildActivity Function
 //   @auto {object} - configuration for the automation

@@ -40,6 +40,6 @@ export interface Argv {
     'update-env-keys'?: Boolean;
     'env-only'?: Boolean;
     force?: Boolean;
-    u?:Boolean;
+    u?: Boolean;
     update?: Boolean;
 }

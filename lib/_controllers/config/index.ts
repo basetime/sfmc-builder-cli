@@ -28,13 +28,12 @@ const ConfigSwitch = async (req: any, argv: Argv) => {
         return initiateConfiguration(argv);
     }
 
-     /**
+    /**
      * Update Configuration
      */
-     if (argv.u || argv.update) {
+    if (argv.u || argv.update) {
         return argv._ && argv._[1] && updateAvailableBusinessUnits(argv._[1]);
     }
-
 
     /**
      * Get Configuration by Instance key
@@ -43,7 +42,6 @@ const ConfigSwitch = async (req: any, argv: Argv) => {
     if (argv._ && argv._[1]) {
         return getInstanceConfiguration(argv._[1], true);
     }
-
 
     /**
      * List all Configurations

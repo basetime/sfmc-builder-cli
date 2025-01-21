@@ -98,7 +98,11 @@ class Deploy {
                     package_dataExtension &&
                     (yield this.deploymentValid(sdk, 'dataExtension', package_dataExtension));
                 console.log({ package_dataExtensionValid });
-                !localOnly && sdk && package_dataExtension && package_dataExtensionValid && (yield this.deployDataExtension(sdk, package_dataExtension));
+                !localOnly &&
+                    sdk &&
+                    package_dataExtension &&
+                    package_dataExtensionValid &&
+                    (yield this.deployDataExtension(sdk, package_dataExtension));
                 !localOnly &&
                     sdk &&
                     package_contentBuilder &&
@@ -366,9 +370,16 @@ class Deploy {
                         break;
                 }
             }
-            const valid = contextValidity.find((asset) => asset.status === 'error') ? false : true;
-            contextValidity && contextValidity.length && contextValidity.forEach((asset) => (0, display_1.displayLine)(asset.msg, asset.status));
-            contextValidity && contextValidity.length && !valid && (0, display_1.displayLine)('Address any conflicts and run [ bldr deploy ] again.', 'progress');
+            const valid = contextValidity.find((asset) => asset.status === 'error')
+                ? false
+                : true;
+            contextValidity &&
+                contextValidity.length &&
+                contextValidity.forEach((asset) => (0, display_1.displayLine)(asset.msg, asset.status));
+            contextValidity &&
+                contextValidity.length &&
+                !valid &&
+                (0, display_1.displayLine)('Address any conflicts and run [ bldr deploy ] again.', 'progress');
             contextValidity && contextValidity.length && valid && (0, display_1.displayLine)('No conflicts to address.', 'success');
             return valid;
         });

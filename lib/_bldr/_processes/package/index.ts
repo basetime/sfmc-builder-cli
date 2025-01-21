@@ -188,12 +188,14 @@ export class Package {
                                                         status: 'Ready',
                                                         steps: buildAutomationSteps(asset, contextAssets),
                                                     };
-
                                                 } else {
-                                                    assetObject = await setAutomationActivityDependencies(asset, manifestJSON)
+                                                    assetObject = await setAutomationActivityDependencies(
+                                                        asset,
+                                                        manifestJSON
+                                                    );
                                                 }
 
-                                                console.log({assetObject})
+                                                console.log({ assetObject });
                                                 packageOut['automationStudio']['assets'].push(assetObject);
                                             });
 

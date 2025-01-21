@@ -40,7 +40,7 @@ const ContextSwitch = async (req: any, argv: Argv) => {
     }
 
     if (argv.ts || argv['triggered-send']) {
-       console.log('triggered send')
+        console.log('triggered send');
     }
 
     return;

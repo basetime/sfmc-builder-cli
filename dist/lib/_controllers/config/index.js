@@ -30,8 +30,8 @@ const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* 
         return initiateConfiguration(argv);
     }
     /**
-    * Update Configuration
-    */
+     * Update Configuration
+     */
     if (argv.u || argv.update) {
         return argv._ && argv._[1] && updateAvailableBusinessUnits(argv._[1]);
     }

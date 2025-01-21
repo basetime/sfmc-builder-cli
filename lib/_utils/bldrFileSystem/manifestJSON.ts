@@ -34,8 +34,8 @@ const updateManifest = async (
 
     // data extensions from the sdk are referenced as emailStudio
     // bldr labels them as dataExtensions
-    if(context === 'emailStudio'){
-        context = 'dataExtension'
+    if (context === 'emailStudio') {
+        context = 'dataExtension';
     }
 
     const rootPath = (await getRootPath()) || path.normalize('./');
@@ -168,7 +168,6 @@ const updateManifest = async (
                         }
                     }
                 }
-
 
                 manifestJSON[context][assetType] = manifestContextItems;
             }
