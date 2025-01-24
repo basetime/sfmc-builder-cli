@@ -42,6 +42,7 @@ const initiate_1 = require("../lib/_controllers/initiate");
 const state_1 = require("../lib/_bldr/_processes/state");
 const crypto_1 = require("../lib/_bldr/_utils/crypto");
 const config_2 = require("../lib/_bldr/_processes/config");
+const audit_1 = require("../lib/_controllers/audit");
 const { setEncryption } = new crypto_1.Crypto();
 const { getInstanceConfiguration } = new config_2.Config();
 const { checkForTracking, getState, debug } = new state_1.State();
@@ -222,6 +223,9 @@ const initCLI = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {
                 break;
             case 'deploy':
                 (0, deploy_1.DeploySwitch)(argv);
+                break;
+            case 'audit':
+                (0, audit_1.AuditSwitch)(argv);
                 break;
             // case 'patch':
             //     patchSwitch.switch(argv);

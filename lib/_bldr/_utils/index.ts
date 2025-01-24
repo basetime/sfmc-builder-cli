@@ -101,4 +101,43 @@ function isDirEmpty(dirname: string) {
     });
 }
 
-export { isWindows, guid, assignObject, uniqueArrayByKey, sfmc_context, getFilePathDetails, isDirEmpty };
+function splitArrayIntoChunks(arr: any[], chunkSize: number) {
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        chunks.push(arr.slice(i, i + chunkSize));
+    }
+    return chunks;
+}
+
+function flattenJSONObject(obj: any) {
+    const flatten = (data: any, prefix = '') =>
+        Object.keys(data).reduce((acc: any, key: any) => {
+            const pre = prefix.length ? `${prefix}.` : ('' as any);
+            if (typeof data[key] === 'object' && data[key] !== null && !Array.isArray(data[key])) {
+                Object.assign(acc, flatten(data[key], pre + key));
+            } else {
+                let value = data[key];
+
+                if (typeof value === undefined || value === null) {
+                    value = '';
+                }
+
+                acc[pre + key] = value.toString();
+            }
+            return acc;
+        }, {});
+
+    return flatten(obj);
+}
+
+export {
+    flattenJSONObject,
+    splitArrayIntoChunks,
+    isWindows,
+    guid,
+    assignObject,
+    uniqueArrayByKey,
+    sfmc_context,
+    getFilePathDetails,
+    isDirEmpty,
+};

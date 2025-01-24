@@ -1,0 +1,1 @@
+declare module 'sfmc-soap-object-reference'

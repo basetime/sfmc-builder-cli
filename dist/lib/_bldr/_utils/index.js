@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isDirEmpty = exports.getFilePathDetails = exports.sfmc_context = exports.uniqueArrayByKey = exports.assignObject = exports.guid = exports.isWindows = void 0;
+exports.isDirEmpty = exports.getFilePathDetails = exports.sfmc_context = exports.uniqueArrayByKey = exports.assignObject = exports.guid = exports.isWindows = exports.splitArrayIntoChunks = exports.flattenJSONObject = void 0;
 const { sfmc_context_mapping } = require('@basetime/bldr-sfmc-sdk/dist/sfmc/utils/sfmcContextMapping');
 const { v4: uuidv4 } = require('uuid');
 const fs_1 = __importDefault(require("fs"));
@@ -98,3 +98,29 @@ function isDirEmpty(dirname) {
     });
 }
 exports.isDirEmpty = isDirEmpty;
+function splitArrayIntoChunks(arr, chunkSize) {
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        chunks.push(arr.slice(i, i + chunkSize));
+    }
+    return chunks;
+}
+exports.splitArrayIntoChunks = splitArrayIntoChunks;
+function flattenJSONObject(obj) {
+    const flatten = (data, prefix = '') => Object.keys(data).reduce((acc, key) => {
+        const pre = prefix.length ? `${prefix}.` : '';
+        if (typeof data[key] === 'object' && data[key] !== null && !Array.isArray(data[key])) {
+            Object.assign(acc, flatten(data[key], pre + key));
+        }
+        else {
+            let value = data[key];
+            if (typeof value === undefined || value === null) {
+                value = '';
+            }
+            acc[pre + key] = value.toString();
+        }
+        return acc;
+    }, {});
+    return flatten(obj);
+}
+exports.flattenJSONObject = flattenJSONObject;

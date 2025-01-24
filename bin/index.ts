@@ -29,6 +29,7 @@ import { InitSwitch } from '../lib/_controllers/initiate';
 import { State } from '../lib/_bldr/_processes/state';
 import { Crypto } from '../lib/_bldr/_utils/crypto';
 import { Config } from '../lib/_bldr/_processes/config';
+import { AuditSwitch } from '../lib/_controllers/audit';
 
 const { setEncryption } = new Crypto();
 const { getInstanceConfiguration } = new Config();
@@ -242,6 +243,10 @@ const initCLI = async (req: string, argv: any) => {
 
             case 'deploy':
                 DeploySwitch(argv);
+                break;
+
+            case 'audit':
+                AuditSwitch(argv);
                 break;
 
             // case 'patch':

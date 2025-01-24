@@ -316,6 +316,29 @@ const DataExtensionSwitch = async (req: any, argv: Argv) => {
                     allowTracking() && incrementMetric('req_clones_dataExtension_assets');
                 }
                 break;
+
+            case 'audit':
+                displayLine(`Starting Data Extension Audit`, 'info');
+                const deRequest = await bldr.sfmc.emailStudio.retrieveAllDataExtensions();
+                console.log('deRequest', deRequest);
+
+                /**
+                 * Clone Data Extension Folders
+                 */
+                if (typeof argv.f === 'string' && argv.f.includes(':')) {
+                    const flag = argv.f.split(':')[1];
+                    const shared = flag && flag === 'shared' ? true : false;
+                    const searchTerm = argv._ && argv._[1];
+
+                    allowTracking() && incrementMetric('req_audit_sharedDataExtension_folders');
+                } else if ((typeof argv.f === 'string' && !argv.f.includes(':')) || typeof argv.f === 'number') {
+
+                    const deRequest = await emailStudio.retrieveAllDataExtensions();
+                    console.log('deRequest', deRequest);
+                    allowTracking() && incrementMetric('req_audit_dataExtension_folders');
+                }
+
+                break;
         }
 
         return;
